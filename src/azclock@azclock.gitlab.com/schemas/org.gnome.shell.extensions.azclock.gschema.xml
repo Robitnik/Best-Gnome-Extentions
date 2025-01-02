@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+    <enum id='org.gnome.shell.extensions.azclock.element-type'>
+        <value value='0' nick='Digital_Clock'/>
+        <value value='1' nick='Analog_Clock'/>
+        <value value='2' nick='Text_Label'/>
+        <value value='3' nick='Command_Label'/>
+    </enum>
+    <enum id='org.gnome.shell.extensions.azclock.anchor-point'>
+        <value value='0' nick='Top_Left'/>
+        <value value='1' nick='Bottom_Left'/>
+        <value value='2' nick='Top_Right'/>
+        <value value='3' nick='Bottom_Right'/>
+        <value value='4' nick='Center'/>
+    </enum>
+    <enum id='org.gnome.shell.extensions.azclock.font-style'>
+        <value value='0' nick='Normal'/>
+        <value value='1' nick='Oblique'/>
+        <value value='2' nick='Italic'/>
+    </enum>
+    <enum id='org.gnome.shell.extensions.azclock.text-align'>
+        <value value='1' nick='Start'/>
+        <value value='2' nick='Center'/>
+        <value value='3' nick='End'/>
+    </enum>
+
+    <schema id="org.gnome.shell.extensions.azclock.widget-data">
+        <child name='element-data' schema='org.gnome.shell.extensions.azclock.element-data'/>
+        <key type="aa{sv}" name="elements">
+            <default><![CDATA[[{}]]]></default>
+            <summary>An array of objects containting the elements relocatable schema ids and if the element is enabled. ex. {id: {enabled: true}}</summary>
+        </key>
+        <key type="s" name="name">
+            <default>''</default>
+            <summary>Widget name.</summary>
+        </key>
+        <key enum="org.gnome.shell.extensions.azclock.anchor-point" name="anchor-point">
+            <default>'Top_Left'</default>
+            <summary>The anchor point of the widget.</summary>
+        </key>
+        <key type="b" name="vertical">
+            <default>true</default>
+            <summary>Vertical orientation for the widgets box.</summary>
+        </key>
+        <key type="i" name="spacing">
+            <default>8</default>
+            <summary>Widget box spacing.</summary>
+        </key>
+        <key type="(iiii)" name="padding">
+            <default>(25, 25, 25, 25)</default>
+            <summary>Widget padding. (top, right, bottom, left).</summary>
+        </key>
+        <key type="b" name="always-on-top">
+            <default>false</default>
+            <summary>The widget will show on top of all windows.</summary>
+        </key>
+        <key type="b" name="lock-widget">
+            <default>false</default>
+            <summary>Lock the widget in place. Preventing drag and drop.</summary>
+        </key>
+        <key type="(ii)" name="location">
+            <default>(50, 50)</default>
+            <summary>Widget location on the screen. (x, y).</summary>
+        </key>
+        <key type="b" name="show-background">
+            <default>false</default>
+            <summary>Widget background enabled.</summary>
+        </key>
+        <key type="s" name="background-color">
+            <default>'rgba(0, 0, 0, .2)'</default>
+            <summary>Widget background color.</summary>
+        </key>
+        <key type="i" name="border-radius">
+            <default>20</default>
+            <summary>Widget border radius.</summary>
+        </key>
+        <key type="b" name="show-border">
+            <default>false</default>
+            <summary>Widget border enabled.</summary>
+        </key>
+        <key type="i" name="border-width">
+            <default>0</default>
+            <summary>Widget border width.</summary>
+        </key>
+        <key type="s" name="border-color">
+            <default>'black'</default>
+            <summary>Widget border color.</summary>
+        </key>
+    </schema>
+
+    <schema id="org.gnome.shell.extensions.azclock.element-data">
+        <key type="s" name="name">
+            <default>''</default>
+            <summary>Element name.</summary>
+        </key>
+
+        <!--Used to determine the type of element-->
+        <key enum="org.gnome.shell.extensions.azclock.element-type" name="element-type">
+            <default>'Digital_Clock'</default>
+            <summary>The element type. 'Digital_Clock', 'Analog_Clock', 'Text_Label', or 'Command_Label'.</summary>
+        </key>
+        <!---->
+
+        <!--General element settings-->
+        <key type="(iiii)" name="padding">
+            <default>(0, 0, 0, 0)</default>
+            <summary>Element padding. (top, right, bottom, left).</summary>
+        </key>
+        <key type="(iiii)" name="margin">
+            <default>(0, 0, 0, 0)</default>
+            <summary>Element margin. (top, right, bottom, left).</summary>
+        </key>
+        <key type="(bsiiii)" name="shadow">
+            <default>(true, 'black', 2, 2, 0, 4)</default>
+            <summary>The text shadow. (enabled, color, x, y, spread, blur).</summary>
+        </key>
+        <!---->
+
+        <!--Specific to Digital Clock Element-->
+        <key type="s" name="date-format">
+            <default>'%H∶%M∶%S'</default>
+            <summary>The date format.</summary>
+        </key>
+        <!---->
+
+        <!--Specific to Analog and Digital Clock Element-->
+        <key type="(bs)" name="timezone-override">
+            <default>(false, 'UTC')</default>
+            <summary>Override the clocks timezone. (enabled, timezone).</summary>
+        </key>
+        <!---->
+
+        <!--Specific to Text Label Element-->
+        <key type="s" name="text">
+            <default>'Text'</default>
+            <summary>The text of the label.</summary>
+        </key>
+        <!---->
+
+        <!--Specific to Command Label Element-->
+        <key type="s" name="command">
+            <default>''</default>
+            <summary>The command to run.</summary>
+        </key>
+        <key type="i" name="polling-interval">
+            <default>250</default>
+            <summary>How often to run the command (ms).</summary>
+        </key>
+        <!---->
+
+        <!--Specific to Analog Clock Element-->
+        <key type="i" name="clock-size">
+            <default>300</default>
+            <summary>The size (px) of the clock.</summary>
+        </key>
+        <key type="b" name="smooth-hand-ticks">
+            <default>false</default>
+            <summary>Clock hands will tick in a smooth continuous way.</summary>
+        </key>
+
+        <!--Clock Face-->
+        <key type="b" name="clock-face-visible">
+            <default>true</default>
+            <summary>Show/Hide the clock face.</summary>
+        </key>
+        <key type="i" name="clock-face-style">
+            <default>3</default>
+            <summary>The style of the clock face.</summary>
+        </key>
+        <key type="(bsiiii)" name="clock-face-shadow">
+            <default>(true, 'rgba(55, 55, 55, 0.3)', 3, 3, 0, 3)</default>
+            <summary>The clock face shadow. (enabled, color, x, y, spread, blur).</summary>
+        </key>
+
+        <!--Clock Button-->
+        <key type="b" name="clock-button-visible">
+            <default>true</default>
+            <summary>Show/Hide the clock button.</summary>
+        </key>
+        <key type="i" name="clock-button-style">
+            <default>3</default>
+            <summary>The style of the clock button.</summary>
+        </key>
+        <key type="s" name="clock-button-color">
+            <default>'yellow'</default>
+            <summary>The color of clock button.</summary>
+        </key>
+        <key type="(bsiiii)" name="clock-button-shadow">
+            <default>(false, 'rgba(55, 55, 55, 0.3)', 3, 3, 0, 3)</default>
+            <summary>The clock button shadow. (enabled, color, x, y, spread, blur).</summary>
+        </key>
+
+        <!--Second Hand-->
+        <key type="b" name="second-hand-visible">
+            <default>true</default>
+            <summary>Show/Hide the second-hand.</summary>
+        </key>
+        <key type="i" name="second-hand-style">
+            <default>3</default>
+            <summary>The style of the second-hand.</summary>
+        </key>
+        <key type="s" name="second-hand-color">
+            <default>'red'</default>
+            <summary>The color of second-hand.</summary>
+        </key>
+        <key type="(bsiiii)" name="second-hand-shadow">
+            <default>(true, 'rgba(55, 55, 55, 0.3)', 3, 3, 0, 3)</default>
+            <summary>The second-hand shadow. (enabled, color, x, y, spread, blur).</summary>
+        </key>
+
+        <!--Minute Hand-->
+        <key type="i" name="minute-hand-style">
+            <default>3</default>
+            <summary>The style of the minute-hand.</summary>
+        </key>
+        <key type="s" name="minute-hand-color">
+            <default>'black'</default>
+            <summary>The color of minute-hand.</summary>
+        </key>
+        <key type="(bsiiii)" name="minute-hand-shadow">
+            <default>(true, 'rgba(55, 55, 55, 0.3)', 3, 3, 0, 3)</default>
+            <summary>The minute-hand shadow. (enabled, color, x, y, spread, blur).</summary>
+        </key>
+        <key type="b" name="minute-hand-adjust-with-seconds">
+            <default>false</default>
+            <summary>The minute hand will adjust with seconds.</summary>
+        </key>
+
+        <!--Hour Hand-->
+        <key type="i" name="hour-hand-style">
+            <default>3</default>
+            <summary>The style of the hour-hand.</summary>
+        </key>
+        <key type="s" name="hour-hand-color">
+            <default>'black'</default>
+            <summary>The color of hour-hand.</summary>
+        </key>
+        <key type="(bsiiii)" name="hour-hand-shadow">
+            <default>(true, 'rgba(55, 55, 55, 0.3)', 3, 3, 0, 3)</default>
+            <summary>The hour-hand shadow. (enabled, color, x, y, spread, blur).</summary>
+        </key>
+        <!---->
+
+        <!--Specific to Label and Digital Clock Elements-->
+        <key type="(bs)" name="font-family-override">
+            <default>(false, 'Cantarell')</default>
+            <summary>Override Font Family. (enabled, font).</summary>
+        </key>
+        <key type="i" name="font-weight">
+            <default>400</default>
+            <summary>Font weight.</summary>
+        </key>
+        <key enum="org.gnome.shell.extensions.azclock.font-style" name="font-style">
+            <default>'Normal'</default>
+            <summary>Font style. 'Normal', 'Oblique', or 'Italic'</summary>
+        </key>
+        <key type="i" name="font-size">
+            <default>64</default>
+            <summary>Font size.</summary>
+        </key>
+        <key type="s" name="foreground-color">
+            <default>'white'</default>
+            <summary>The text color.</summary>
+        </key>
+        <key type="b" name="show-background">
+            <default>false</default>
+            <summary>Widget background enabled.</summary>
+        </key>
+        <key type="s" name="background-color">
+            <default>'rgba(0, 0, 0, .2)'</default>
+            <summary>Widget background color.</summary>
+        </key>
+        <key type="i" name="border-radius">
+            <default>20</default>
+            <summary>Widget border radius.</summary>
+        </key>
+        <key type="b" name="show-border">
+            <default>false</default>
+            <summary>Widget border enabled.</summary>
+        </key>
+        <key type="i" name="border-width">
+            <default>0</default>
+            <summary>Widget border width.</summary>
+        </key>
+        <key type="s" name="border-color">
+            <default>'black'</default>
+            <summary>Widget border color.</summary>
+        </key>
+        <key enum="org.gnome.shell.extensions.azclock.text-align" name="text-align-x">
+            <default>'Center'</default>
+            <summary>Text alignment x.</summary>
+        </key>
+        <key enum="org.gnome.shell.extensions.azclock.text-align" name="text-align-y">
+            <default>'Center'</default>
+            <summary>Text alignment y.</summary>
+        </key>
+        <key enum="org.gnome.shell.extensions.azclock.text-align" name="line-alignment">
+            <default>'Center'</default>
+            <summary>Text lines alignment.</summary>
+        </key>
+        <!---->
+    </schema>
+
+    <schema id="org.gnome.shell.extensions.azclock" path="/org/gnome/shell/extensions/azclock/">
+        <child name='widget-data' schema='org.gnome.shell.extensions.azclock.widget-data'/>
+        <key type="aa{sv}" name="widgets">
+            <default><![CDATA[[{}]]]></default>
+            <summary>An array of objects containting the widgets relocatable schema ids and if the widget is enabled. ex. {id: {enabled: true}}.</summary>
+        </key>
+        <key type="b" name="create-initial-widget">
+            <default>true</default>
+            <summary>Create the initial Digital Clock Widget.</summary>
+        </key>
+        <key type="a{ss}" name="changed-data">
+            <default>{}</default>
+            <summary>*DEPRECATED* Store details about which widget-data entry changed.</summary>
+        </key>
+        <key type="aaa{ss}" name="widget-data">
+            <default>[]</default>
+            <summary>*DEPRECATED* Stores clocks data</summary>
+        </key>
+    </schema>
+</schemalist>

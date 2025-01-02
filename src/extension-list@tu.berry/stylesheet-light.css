@@ -1,0 +1,35 @@
+.extension-list-view {
+  max-height: 40em;
+}
+
+.extension-list-label {
+  max-width: 14em;
+}
+
+.extension-list-label:state-error {
+  color: #e01b24;
+}
+
+.extension-list-label:state-outdate {
+  color: #e5a50a;
+}
+
+.extension-list-label:state-immutable {
+  color: rgba(148, 147, 146, 0.9);
+}
+
+.extension-list-label:focus {
+  outline: 0.15em solid st-transparentize(-st-accent-color, 0.3);
+}
+
+.extension-list-icon {
+  padding: 0 0.15em;
+}
+
+.extension-list-icon:hover {
+  color: st-darken(-st-accent-color, 5%);
+}
+
+.extension-list-icon:focus {
+  outline: 0.15em solid st-transparentize(-st-accent-color, 0.3);
+}

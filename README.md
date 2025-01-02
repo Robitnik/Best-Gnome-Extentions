@@ -5,7 +5,6 @@ Best extentions for Gnome 45,46,47
 ./extentions/install.sh
 
 
-Here's a README file formatted to describe the provided setup:
 
 ---
 

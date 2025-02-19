@@ -1,5 +1,3 @@
-/* exported PrivacyQuickSettingsManager */
-
 //Main imports
 import St from 'gi://St';
 import Gio from 'gi://Gio';
@@ -14,6 +12,13 @@ const QuickSettingsMenu = Main.panel.statusArea.quickSettings;
 
 //Extension system imports
 import {Extension, gettext as _} from 'resource:///org/gnome/shell/extensions/extension.js';
+
+//Constants for menu display modes
+const DisplayMode = {
+  QuickToggles: 0,
+  QuickGroup: 1,
+  Indicators: 2
+};
 
 //Custom PopupMenuItem with an icon, label and switch
 const PrivacySettingImageSwitchItem = GObject.registerClass(
@@ -131,7 +136,7 @@ const PrivacyQuickToggle = GObject.registerClass(
 //Class for the privacy quick settings group
 const PrivacyQuickGroup = GObject.registerClass(
   class PrivacyQuickGroup extends QuickSettings.QuickMenuToggle {
-    _init(useQuickSubtitle, clickToToggle) {
+    _init(extension, useQuickSubtitle, clickToToggle) {
       //Set up the quick setting toggle
       super._init({
         title: _('Privacy'),
@@ -203,6 +208,16 @@ const PrivacyQuickGroup = GObject.registerClass(
       //Set the subtitle
       this._useQuickSubtitle = useQuickSubtitle;
       this._updateSubtitle();
+
+      //Add extension settings entry
+      this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
+      let settingsItem = this.menu.addAction(_('Extension Settings'), () => {
+        extension.openPreferences();
+      });
+
+      //Hide the settings when the screen is locked
+      settingsItem.visible = Main.sessionMode.allowSettings;
+      this.menu._settingsActions[extension.uuid] = settingsItem;
 
       //Set initial enabled / disabled
       this._updateVisualState();
@@ -300,9 +315,9 @@ class QuickSettingsManager {
 }
 
 class QuickGroupManager {
-  constructor(useQuickSubtitle, clickToToggle) {
+  constructor(extension, useQuickSubtitle, clickToToggle) {
     //Create quick settings group and add to the system menu
-    this._quickSettingsGroup = new PrivacyQuickGroup(useQuickSubtitle, clickToToggle);
+    this._quickSettingsGroup = new PrivacyQuickGroup(extension, useQuickSubtitle, clickToToggle);
     let backgroundApps = QuickSettingsMenu._backgroundApps?.quickSettingsItems?.at(-1) ?? null;
     QuickSettingsMenu.menu.insertItemBefore(this._quickSettingsGroup, backgroundApps);
   }
@@ -343,7 +358,7 @@ class IndicatorSettingsManager {
 export default class PrivacyQuickSettingsManager extends Extension {
   enable() {
     //Create new extension
-    this._privacyMenu = new PrivacyExtension(this.getSettings());
+    this._privacyMenu = new PrivacyExtension(this);
 
     //Create menu
     this._privacyMenu.initMenu();
@@ -358,9 +373,10 @@ export default class PrivacyQuickSettingsManager extends Extension {
 }
 
 class PrivacyExtension {
-  constructor(extensionSettings) {
+  constructor(extension) {
     this._privacyManager = null;
-    this._extensionSettings = extensionSettings;
+    this._extension = extension;
+    this._extensionSettings = this._extension.getSettings();
   }
 
   disconnectListeners() {
@@ -369,18 +385,18 @@ class PrivacyExtension {
 
   _decideMenuType() {
     /*
-     - Return 'quick-toggles' if quick settings are enabled
-       - If quick settings grouping is also enabled, return 'quick-group' instead
-     - Otherwise return 'indicators'
+     - Return DisplayMode.QuickToggles if quick settings are enabled
+       - If quick settings grouping is also enabled, return DisplayMode.QuickGroup instead
+     - Otherwise return DisplayMode.Indicators
     */
     if (this._extensionSettings.get_boolean('use-quick-settings')) {
       if (this._extensionSettings.get_boolean('group-quick-settings')) {
-        return 'quick-group';
+        return DisplayMode.QuickGroup;
       }
-      return 'quick-toggles';
+      return DisplayMode.QuickToggles;
     }
 
-    return 'indicator';
+    return DisplayMode.Indicator;
   }
 
   initMenu() {
@@ -396,17 +412,20 @@ class PrivacyExtension {
   }
 
   _createMenu() {
-    //Create the correct type of menu, from preference and capabilities
-    let menuType = this._decideMenuType();
-    if (menuType == 'quick-toggles') {
-      this._privacyManager = new QuickSettingsManager();
-    } else if (menuType == 'quick-group') {
-      let useQuickSubtitle = this._extensionSettings.get_boolean('use-quick-subtitle')
-      let clickToToggle = this._extensionSettings.get_boolean('click-to-toggle')
-      this._privacyManager = new QuickGroupManager(useQuickSubtitle, clickToToggle);
-    } else if (menuType == 'indicator') {
-      let forceIconRight = this._extensionSettings.get_boolean('move-icon-right');
-      this._privacyManager = new IndicatorSettingsManager(forceIconRight);
+    //Create the correct type of menu, from preferences and capabilities
+    switch (this._decideMenuType()) {
+      case DisplayMode.QuickToggles:
+        this._privacyManager = new QuickSettingsManager();
+        break;
+      case DisplayMode.QuickGroup:
+        let useQuickSubtitle = this._extensionSettings.get_boolean('use-quick-subtitle');
+        let clickToToggle = this._extensionSettings.get_boolean('click-to-toggle');
+        this._privacyManager = new QuickGroupManager(this._extension, useQuickSubtitle, clickToToggle);
+        break;
+      case DisplayMode.Indicator:
+        let forceIconRight = this._extensionSettings.get_boolean('move-icon-right');
+        this._privacyManager = new IndicatorSettingsManager(forceIconRight);
+        break;
     }
   }
 

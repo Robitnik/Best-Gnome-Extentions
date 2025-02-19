@@ -898,7 +898,7 @@
                                 <property name="halign">start</property>
                                 <property name="margin-start">5</property>
                                 <property name="margin-end">5</property>
-                                <property name="label" translatable="yes">Monitor gpu (beta; NVIDIA only)</property>
+                                <property name="label" translatable="yes">Monitor GPU (beta)</property>
                               </object>
                             </child>
                             <child>
@@ -1224,6 +1224,8 @@
                           <item translatable="yes">BAT2</item>
                           <item translatable="yes">BATT</item>
                           <item translatable="yes">CMB0</item>
+                          <item translatable="yes">CMB1</item>
+                          <item translatable="yes">CMB2</item>
                           <item translatable="yes">macsmc-battery</item>
                         </items>
                       </object>
